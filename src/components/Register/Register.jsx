@@ -8,14 +8,15 @@ const auth = getAuth(app);
 
 const Register = () => {
 
-    const [email, setEmail] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
 
 
     const handleSubmit = () => {
         event.preventDefault();
-        const email = event.target.email.value;
-        const password = event.target.password.value;
+        var email = event.target.email.value;
+        var password = event.target.password.value;
         console.log(email, password);
 
         // create user in firebase
@@ -25,17 +26,23 @@ const Register = () => {
 
                 const loggedUser = result.user;
                 console.log(loggedUser);
+                setError('');
+                event.target.reset;
+                setSuccess('User has created successfully')
+
 
             })
             .catch(error => {
-                console.log("Error", error.message);
+                console.error(error.message);
+                setError(error.message);
+                setSuccess('');
             })
 
     };
 
     const handleEmailChange = (event) => {
         console.log(event.target.value);
-        setEmail(event.target.value);
+
     }
 
     const handlePasswordBlur = (event) => {
@@ -49,16 +56,18 @@ const Register = () => {
 
             <form onSubmit={handleSubmit}>
 
-                <input onBlur={handleEmailChange} type="email" name='email' id='email' placeholder='Your email address' />
+                <input onBlur={handleEmailChange} type="email" name='email' id='email' placeholder='Your email address' required />
 
                 <br />
 
-                <input onBlur={handlePasswordBlur} type="password" name='password' id='password' placeholder='Enter your password' />
+                <input onBlur={handlePasswordBlur} type="password" name='password' id='password' placeholder='Enter your password' required />
                 <br />
 
                 <input type="submit" value='Register' />
 
             </form>
+            <p className="text-danger">{error}</p>
+            <p className="text-success">{success}</p>
         </div>
     );
 };
