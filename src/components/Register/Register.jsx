@@ -1,5 +1,6 @@
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from "firebase/auth";
 import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 import app from '../../firebase/firebase.config';
 
 
@@ -15,8 +16,8 @@ const Register = () => {
 
     const handleSubmit = () => {
         event.preventDefault();
-        var email = event.target.email.value;
-        var password = event.target.password.value;
+        const email = event.target.email.value;
+        const password = event.target.password.value;
         console.log(email, password);
 
         // create user in firebase
@@ -27,8 +28,9 @@ const Register = () => {
                 const loggedUser = result.user;
                 console.log(loggedUser);
                 setError('');
-                event.target.reset;
+                // event.target.reset();
                 setSuccess('User has created successfully')
+                sendverificationEmail(result.user);
 
 
             })
@@ -39,6 +41,15 @@ const Register = () => {
             })
 
     };
+
+    const sendverificationEmail = (user) => {
+        sendEmailVerification(user)
+            .then(result => {
+                console.log(result);
+                alert("Please verify your email address")
+            })
+
+    }
 
     const handleEmailChange = (event) => {
         console.log(event.target.value);
@@ -66,6 +77,7 @@ const Register = () => {
                 <input type="submit" value='Register' />
 
             </form>
+            <p><small>Already have an account? Please <Link to="/login">Log in</Link> </small></p>
             <p className="text-danger">{error}</p>
             <p className="text-success">{success}</p>
         </div>
